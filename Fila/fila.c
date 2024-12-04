@@ -2,68 +2,81 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct no { 
-    char* url;           
-    struct no* prox; 
-} no;
 
-no *pi;
+typedef struct No {
+    int id;
+    char nome[50];
+    struct No* proximo;
+} No;
 
-void criapilha(void) {
-    pi = malloc(sizeof(no));  
-    pi->prox = NULL; 
+
+void enfileirar(No** frente, No** final, int id, const char* nome) {
+    No* novoNo = (No*)malloc(sizeof(No));
+    novoNo->id = id;
+    snprintf(novoNo->nome, sizeof(novoNo->nome), "%s", nome);
+    novoNo->proximo = NULL;
+
+    if (*final == NULL) { 
+        *frente = novoNo;
+        *final = novoNo;
+    } else {
+        (*final)->proximo = novoNo;
+        *final = novoNo;
+    }
 }
 
-void empilha(const char* url) {
-    no *nova = malloc(sizeof(no)); 
-    nova->url = malloc(strlen(url) + 1);  
-    strcpy(nova->url, url);  
-    nova->prox = pi->prox;  
-    pi->prox = nova; 
-}
 
-no* desempilha(void) {
-    if (pi->prox == NULL) {  
-        return NULL;
+No* desenfileirar(No** frente, No** final) {
+    if (*frente == NULL) {
+        return NULL; // Fila vazia
     }
 
-    no *p = pi->prox; 
-    pi->prox = p->prox; 
-    return p; 
+    No* temp = *frente; 
+    *frente = (*frente)->proximo; 
+
+    if (*frente == NULL) { 
+        *final = NULL;
+    }
+
+    return temp; 
 }
 
-void exibirPilha(no* pi) {
-    no* atual = pi->prox; 
-    if (atual == NULL) {
+void liberaNo(No* temp) {
+    if (temp != NULL) {
+        free(temp);
+    }
+}
+
+
+void exibirFila(No* frente) {
+    if (frente == NULL) {
+        printf("Fila vazia!\n");
         return;
     }
-    
-    printf("Elementos na pilha:\n");
+
+    No* atual = frente;
     while (atual != NULL) {
-        printf("URL: %s\n", atual->url);
-        atual = atual->prox;
+        printf("ID=%d, Nome=%s\n", atual->id, atual->nome);
+        atual = atual->proximo;
     }
 }
 
-
 int main() {
-    criapilha();
+    No* frente = NULL;
+    No* final = NULL;
 
-    empilha("www.google.com");
-    empilha("www.youtube.com");
-    empilha("www.github.com");
-    
-    exibirPilha(pi);
+    enfileirar(&frente, &final, 1, "João");
+    enfileirar(&frente, &final, 2, "Maria");
+    enfileirar(&frente, &final, 3, "Carlos");
 
-    no* p = desempilha();
-    if (p != NULL) {
-        printf("Desempilhado: %s\n", p->url);
-        free(p->url);
-        free(p);
-    }
+    exibirFila(frente);
     
-    exibirPilha(pi);
+    No* temp = desenfileirar(&frente, &final); 
+    printf("Desenfileirado: ID=%d, Nome=%s\n", temp->id, temp->nome);
+
+    liberaNo(temp);
     
-    
+    exibirFila(frente);
+
     return 0;
 }
