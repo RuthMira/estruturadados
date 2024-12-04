@@ -15,37 +15,43 @@ void criapilha(void) {
 }
 
 void empilha(const char* url) {
-    no *nova;
-    nova = malloc(sizeof(no)); 
+    no *nova = malloc(sizeof(no)); 
     nova->url = malloc(strlen(url) + 1);  
     strcpy(nova->url, url);  
     nova->prox = pi->prox;  
     pi->prox = nova; 
 }
 
-char* desempilha(void) {
+no* desempilha(void) {
     if (pi->prox == NULL) {  
         return NULL;
     }
 
     no *p = pi->prox; 
-    char* url = p->url;  
     pi->prox = p->prox; 
-    free(p); 
-    return url; 
+    return p; 
 }
 
-
-void liberaPilha(void) {
-    no *p = pi->prox;
-    while (p != NULL) {
-        no *temp = p;
-        p = p->prox;
-        free(temp->url);  
-        free(temp); 
+void liberaNo(no* p) {
+    if (p != NULL) {
+        free(p->url);  
+        free(p);
     }
-    free(pi);
 }
+
+void exibirPilha(no* pi) {
+    no* atual = pi->prox; 
+    if (atual == NULL) {
+        return;
+    }
+    
+    printf("Elementos na pilha:\n");
+    while (atual != NULL) {
+        printf("URL: %s\n", atual->url);
+        atual = atual->prox;
+    }
+}
+
 
 int main() {
     criapilha();
@@ -53,28 +59,16 @@ int main() {
     empilha("www.google.com");
     empilha("www.youtube.com");
     empilha("www.github.com");
-
-    char* url = desempilha();
-    if (url != NULL) {
-        printf("%s\n", url);
-    }
-
     
-    char* url1 = desempilha();
-    if (url1 != NULL) {
-        printf("%s\n", url1);
-    }
+    exibirPilha(pi);
+
+    no* p = desempilha();
+    printf("%s\n", p->url);
     
-    char* url2 = desempilha();
-    if (url2 != NULL) {
-        printf("%s\n", url2);
-    }
-
-
-    liberaPilha();
-
+    liberaNo(p);
+    
+    exibirPilha(pi);
+    
+    
     return 0;
 }
-
-liberar pilha esta destruindo a pilha , so limpar a temp
-chamada na main usando uma nova variavel em vez de retornar a tem 
