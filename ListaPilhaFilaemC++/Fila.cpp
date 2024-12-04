@@ -19,11 +19,11 @@ struct No {
 void enfileirar(No** frente, No** final, Pessoa pessoa) {
     No* novono = new No(pessoa);
     if (*final == nullptr) { 
-        *frente = novono;
+        *frente = novono; 
     } else {
-        (*final)->proximo = novono; 
+        (*final)->proximo = novono;  
+    }
     *final = novono; 
-}
 }
 
 Pessoa desenfileirar(No** frente, No** final) {
@@ -34,9 +34,9 @@ Pessoa desenfileirar(No** frente, No** final) {
     No* auxiliar = *frente;
     Pessoa pessoa = auxiliar->pessoa;
     
-    *frente = (*frente)->proximo;
+    *frente = (*frente)->proximo;  
     
-    if (*frente == nullptr) {
+    if (*frente == nullptr) { 
         *final = nullptr;
     }
 
@@ -62,12 +62,10 @@ int main() {
     enfileirar(&frente, &final, p1);
     enfileirar(&frente, &final, p2);
 
-    std::cout << "Fila de Pessoas:\n";
     imprimirFila(frente);
 
-    std::cout << "\nDesenfileirando: " << desenfileirar(&frente, &final).nome << "\n";
-    imprimirFila(frente);
-
+    std::cout << "\n" << desenfileirar(&frente, &final).nome << "\n";
+    
 
     return 0;
 }
