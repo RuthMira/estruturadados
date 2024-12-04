@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+using namespace std;
 
 struct No {
     string pagina;
@@ -11,22 +12,24 @@ struct No {
 
 class Historico {
 private:
-    No* topo; 
+    No* topo;
 
 public:
     Historico() {
-        topo = nullptr;  
+        topo = nullptr;
     }
 
     ~Historico() {
         while (topo != nullptr) {
-            voltarPagina(); 
+            No* removido = topo;
+            topo = topo->proximo;
+            delete removido;
         }
     }
 
     void acessarPagina(string pagina) {
         No* novoNo = new No(pagina);
-        novoNo->proximo = topo;  
+        novoNo->proximo = topo;
         topo = novoNo;
 
         cout << "Página acessada: " << novoNo->pagina << endl;
@@ -39,32 +42,24 @@ public:
         }
 
         No* removido = topo;
-        topo = topo->proximo;  
+        topo = topo->proximo;
 
-        string paginaVoltada = removido->pagina;  
-        cout << "Voltando para a página: " << paginaVoltada << endl;
+        string paginaVoltada = removido->pagina;
 
-        if (topo != nullptr) {
-            cout << "Página atual: " << topo->pagina << endl;
-        } else {
-            cout << "Página atual: Início" << endl;  
-        }
-        delete removido; 
-        
-        return paginaVoltada;  
+        delete removido;
+        return paginaVoltada;
     }
 };
 
 int main() {
     Historico historico;
 
-    historico.acessarPagina("Página 1");
-    historico.acessarPagina("Página 2");
-    historico.acessarPagina("Página 3");
+    historico.acessarPagina("www.google.com.br");
+    historico.acessarPagina("www.github.com.br");
+    historico.acessarPagina("www.youtrack.com.br");
 
     string pagina = historico.voltarPagina();
-    cout << "Página voltada: " << pagina << endl;
-
+    cout << "\n" << pagina << endl;
 
     return 0;
 }
