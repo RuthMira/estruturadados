@@ -34,7 +34,7 @@ No* desenfileirar(No** frente, No** final) {
     if (*frente == NULL) {
         *final = NULL;
     }
-
+    
     return temp; 
 }
 
@@ -69,15 +69,25 @@ int main() {
 
     printf("Estado inicial da fila:\n");
     exibirFila(frente);
-
+    
     printf("\nDesenfileirando um elemento:\n");
     No* removido = desenfileirar(&frente, &final);
     if (removido != NULL) {
         printf("Desenfileirado: ID=%d, Nome=%s\n", removido->id, removido->nome);
         free(removido);
     }
+    
+    printf("Estado inicial da fila:\n");
+    exibirFila(frente);
 
     liberarFila(frente); 
-
+    
+    printf("Estado inicial da fila:\n");
+    exibirFila(frente);
+    
     return 0;
 }
+
+
+liberar fila precisa so limpar a memoria do temp
+mani o desinfilerar mosttar o conteudo do temp , que aind aano limpei
