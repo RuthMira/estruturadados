@@ -24,6 +24,7 @@ void enfileirar(No** frente, No** final, Pessoa pessoa) {
         (*final)->proximo = novono; 
     *final = novono; 
 }
+}
 
 Pessoa desenfileirar(No** frente, No** final) {
     if (*frente == nullptr) {
