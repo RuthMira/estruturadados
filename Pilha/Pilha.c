@@ -59,7 +59,22 @@ int main() {
         printf("%s\n", url);
     }
 
+    
+    char* url1 = desempilha();
+    if (url1 != NULL) {
+        printf("%s\n", url1);
+    }
+    
+    char* url2 = desempilha();
+    if (url2 != NULL) {
+        printf("%s\n", url2);
+    }
+
+
     liberaPilha();
 
     return 0;
 }
+
+liberar pilha esta destruindo a pilha , so limpar a temp
+chamada na main usando uma nova variavel em vez de retornar a tem 
