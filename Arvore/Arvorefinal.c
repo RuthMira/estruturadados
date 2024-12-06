@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Estrutura da árvore
+// Estrutura de um nó em uma árvore binária
 typedef struct cel
 {
     int conteudo;
-    struct cel *esquerda, *direita;
+    struct cel *esquerda;
+    struct cel *direita;
 } Cel;
 
-// Função para inserir um nó na árvore
+// Função para inserir um nó na árvore binária
 void insere(Cel **raiz, int valor)
 {
     if (*raiz == NULL)
@@ -32,7 +33,7 @@ void insere(Cel **raiz, int valor)
     }
 }
 
-// Função para imprimir a árvore em ordem (esq -> raiz -> dir)
+// Função para imprimir a árvore em ordem (esquerda -> raiz -> direita)
 void imprimir(Cel *raiz)
 {
     if (raiz != NULL)
@@ -43,20 +44,22 @@ void imprimir(Cel *raiz)
     }
 }
 
-// Função para buscar a mãe de um nó
+// Função para buscar o "pai" de um nó específico
 Cel *BuscarMae(Cel *raiz, int valor)
 {
     if (raiz == NULL)
     {
-        printf("Raiz nula!\n");
         return NULL;
     }
 
+    // O nó raiz não possui pai
     if (valor == raiz->conteudo)
     {
         return NULL;
     }
-    else if (valor < raiz->conteudo)
+
+    // Busca na subárvore esquerda
+    if (valor < raiz->conteudo)
     {
         if (raiz->esquerda != NULL && raiz->esquerda->conteudo == valor)
         {
@@ -64,7 +67,9 @@ Cel *BuscarMae(Cel *raiz, int valor)
         }
         return BuscarMae(raiz->esquerda, valor);
     }
-    else if (valor > raiz->conteudo)
+
+    // Busca na subárvore direita
+    if (valor > raiz->conteudo)
     {
         if (raiz->direita != NULL && raiz->direita->conteudo == valor)
         {
@@ -72,60 +77,11 @@ Cel *BuscarMae(Cel *raiz, int valor)
         }
         return BuscarMae(raiz->direita, valor);
     }
-    return NULL; // Retorna NULL caso não encontre a mãe
+
+    return NULL;
 }
 
-// Função para remover um nó e reorganizar a árvore (casos de remoção)
-Cel *RemoverNo(Cel *raiz, int valor)
-{
-    if (raiz == NULL)
-    {
-        printf("Árvore vazia!\n");
-        return NULL;
-    }
-
-    // Caso o valor a ser removido seja a raiz
-    if (raiz->conteudo == valor)
-    {
-        // Caso 1: Não há subárvore à esquerda, então o nó da direita substitui a raiz
-        if (raiz->esquerda == NULL)
-        {
-            Cel *temp = raiz->direita;
-            free(raiz);
-            return temp;
-        }
-        // Caso 2: Não há subárvore à direita, então o nó da esquerda substitui a raiz
-        else if (raiz->direita == NULL)
-        {
-            Cel *temp = raiz->esquerda;
-            free(raiz);
-            return temp;
-        }
-        // Caso 3: O nó tem ambos os filhos, precisamos encontrar o maior da subárvore esquerda
-        else
-        {
-            Cel *maiorEsqMae = BuscarMaiorEsquerda(raiz);
-            if (maiorEsqMae != NULL)
-            {
-                Cel *maiorEsq = maiorEsqMae->direita;
-                raiz->conteudo = maiorEsq->conteudo;
-                raiz->esquerda = RemoverNo(raiz->esquerda, maiorEsq->conteudo);
-            }
-        }
-    }
-    else if (valor < raiz->conteudo)
-    {
-        raiz->esquerda = RemoverNo(raiz->esquerda, valor);
-    }
-    else if (valor > raiz->conteudo)
-    {
-        raiz->direita = RemoverNo(raiz->direita, valor);
-    }
-
-    return raiz;
-}
-
-// Função para buscar o maior nó à esquerda
+// Função auxiliar para buscar o maior nó na subárvore esquerda
 Cel *BuscarMaiorEsquerda(Cel *raiz)
 {
     if (raiz == NULL || raiz->esquerda == NULL)
@@ -145,10 +101,64 @@ Cel *BuscarMaiorEsquerda(Cel *raiz)
     return mae;
 }
 
+// Função para remover um nó da árvore
+Cel *RemoverNo(Cel *raiz, int valor)
+{
+    if (raiz == NULL)
+    {
+        printf("Árvore vazia ou valor não encontrado!\n");
+        return NULL;
+    }
+
+    if (valor < raiz->conteudo)
+    {
+        raiz->esquerda = RemoverNo(raiz->esquerda, valor);
+    }
+    else if (valor > raiz->conteudo)
+    {
+        raiz->direita = RemoverNo(raiz->direita, valor);
+    }
+    else
+    {
+        // Nó encontrado
+        if (raiz->esquerda == NULL && raiz->direita == NULL)
+        {
+            free(raiz);
+            return NULL;
+        }
+        else if (raiz->esquerda == NULL)
+        {
+            Cel *temp = raiz->direita;
+            free(raiz);
+            return temp;
+        }
+        else if (raiz->direita == NULL)
+        {
+            Cel *temp = raiz->esquerda;
+            free(raiz);
+            return temp;
+        }
+        else
+        {
+            Cel *maiorEsqMae = BuscarMaiorEsquerda(raiz);
+            if (maiorEsqMae != NULL)
+            {
+                Cel *maiorEsq = maiorEsqMae->direita;
+                raiz->conteudo = maiorEsq->conteudo;
+                raiz->esquerda = RemoverNo(raiz->esquerda, maiorEsq->conteudo);
+            }
+        }
+    }
+
+    return raiz;
+}
+
+// Função principal para testar a árvore
 int main()
 {
     Cel *raiz = NULL;
 
+    // Inserindo elementos na árvore
     insere(&raiz, 10);
     insere(&raiz, 5);
     insere(&raiz, 6);
@@ -162,7 +172,7 @@ int main()
     printf("Árvore original:\n");
     imprimir(raiz);
 
-    // Buscar a mãe de um nó
+    // Buscar mãe de um nó
     int valorBusca = 10;
     Cel *mae = BuscarMae(raiz, valorBusca);
     if (mae != NULL)
@@ -174,43 +184,11 @@ int main()
         printf("\nO valor %d é a raiz da árvore ou não está presente.\n", valorBusca);
     }
 
-    // Remover o valor da árvore e reorganizar
+    // Remover um nó
     printf("\nRemovendo o valor %d da árvore...\n", valorBusca);
     raiz = RemoverNo(raiz, valorBusca);
-    printf("Árvore após remoção:\n");
+    printf("Árvore após a remoção:\n");
     imprimir(raiz);
 
     return 0;
 }
-
-
-// Cel *Remover(Cel *raiz, Cel *no)
-// {
-//     if (raiz == NULL)
-//         return raiz;
-
-//     if (no->conteudo < raiz->conteudo)
-//         raiz->esquerda = Remover(raiz->esquerda, no);
-//     else if (no->conteudo > raiz->conteudo)
-//         raiz->direita = Remover(raiz->direita, no);
-//     else
-//     {
-//         if (raiz->esquerda == NULL)
-//         {
-//             Cel *temp = raiz->direita;
-//             free(raiz);
-//             return temp;
-//         }
-//         else if (raiz->direita == NULL)
-//         {
-//             Cel *temp = raiz->esquerda;
-//             free(raiz);
-//             return temp;
-//         }
-
-//         Cel *temp = BuscarMaiorEsquerda(raiz);
-//         raiz->conteudo = temp->conteudo;
-//         raiz->esquerda = Remover(raiz->esquerda, temp);
-//     }
-//     return raiz;
-// }
