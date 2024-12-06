@@ -2,19 +2,16 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-
-// estrutura do meu nó m uma arvore
+// estrutura do meu n� m uma arvore
 typedef struct cel
 {
     int conteudo;
     struct cel *esquerda, *direita;
 } Cel;
 
-
-
 // inserindo um no na arvore
 void insere(Cel **raiz, int valor)
-{   
+{
     if (*raiz == NULL)
     {
         Cel *novo;
@@ -26,7 +23,7 @@ void insere(Cel **raiz, int valor)
     }
     else
     {
-        // se a arvore já possui nos compara o valor do novo com a raiz valor<raiz se insere novo->esquerda
+        // se a arvore j� possui nos compara o valor do novo com a raiz valor<raiz se insere novo->esquerda
         if (valor < (*raiz)->conteudo)
         {
             insere(&((*raiz)->esquerda), valor);
@@ -39,8 +36,6 @@ void insere(Cel **raiz, int valor)
     }
 }
 
-
-
 // imprimir a arvore em em-ordem esq->raiz->dir
 void imprimir(Cel *raiz)
 {
@@ -52,7 +47,7 @@ void imprimir(Cel *raiz)
     }
 }
 
-//Busca na arvore por um no em especifico retornando o pai desta
+// Busca na arvore por um no em especifico retornando o pai desta
 Cel *BuscarMae(Cel *raiz, int valor)
 {
 
@@ -90,36 +85,29 @@ Cel *BuscarMae(Cel *raiz, int valor)
     }
 }
 
-
-
 // remover um no e se necessario reorganizar a arvore (tres casos)
 Cel *RemoverNo(Cel *raiz, int valor)
 {
     if (raiz == NULL)
     {
-        printf("Árvore vazia!\n");
+        printf("�rvore vazia!\n");
         return NULL;
     }
 
-    // Se o valor a ser removido é a raiz
+    // Se o valor a ser removido � a raiz
     if (raiz->conteudo == valor)
     {
-        // Encontra o nó pai do maior elemento na subárvore esquerda
         Cel *maiorEsqMae = BuscarMaiorEsquerda(raiz);
 
         if (maiorEsqMae != NULL)
         {
-            // O maior elemento está na subárvore esquerda
             Cel *maiorEsq = maiorEsqMae->direita;
-
-            // Troca os conteúdos
             raiz->conteudo = maiorEsq->conteudo;
-            // Remove o nó encontrado da subárvore esquerda
             raiz->esquerda = RemoverNo(raiz->esquerda, maiorEsq->conteudo);
         }
         else
         {
-            // Se não há elementos na subárvore esquerda, o nó da direita se torna a nova raiz
+            // Se n�o h� elementos na sub�rvore esquerda, o n� da direita se torna a nova raiz
             Cel *temp = raiz->direita;
             free(raiz);
             return temp;
@@ -127,19 +115,19 @@ Cel *RemoverNo(Cel *raiz, int valor)
     }
     else
     {
-        // Continua com a lógica de remoção para outros nós da árvore
+        // Continua com a l�gica de remo��o para outros n�s da �rvore
         Cel *mae = BuscarMae(raiz, valor);
 
         if (mae == NULL)
         {
-            printf("Valor não encontrado na árvore!\n");
+            printf("Valor n�o encontrado na �rvore!\n");
             return raiz;
         }
 
-        // Identificando se o nó a ser removido está à esquerda ou à direita da mãe
+        // Identificando se o n� a ser removido est� � esquerda ou � direita da m�e
         Cel *noRemover = (mae->esquerda && mae->esquerda->conteudo == valor) ? mae->esquerda : mae->direita;
 
-        // Caso 1: Nó é uma folha
+        // Caso 1: N� � uma folha
         if (noRemover->esquerda == NULL && noRemover->direita == NULL)
         {
             if (mae->esquerda == noRemover)
@@ -152,7 +140,7 @@ Cel *RemoverNo(Cel *raiz, int valor)
             }
             free(noRemover);
         }
-        // Caso 2: Nó tem um filho
+        // Caso 2: N� tem um filho
         else if (noRemover->esquerda == NULL || noRemover->direita == NULL)
         {
             Cel *filho = (noRemover->esquerda != NULL) ? noRemover->esquerda : noRemover->direita;
@@ -166,7 +154,7 @@ Cel *RemoverNo(Cel *raiz, int valor)
             }
             free(noRemover);
         }
-        // Caso 3: Nó tem dois filhos
+        // Caso 3: N� tem dois filhos
         else
         {
             Cel *sucessor = noRemover->direita;
@@ -183,12 +171,11 @@ Cel *RemoverNo(Cel *raiz, int valor)
     return raiz;
 }
 
-
 Cel *BuscarMaiorEsquerda(Cel *raiz)
 {
     if (raiz == NULL || raiz->esquerda == NULL)
     {
-        return NULL; // Se a raiz ou a subárvore esquerda forem nulas, não há maior elemento
+        return NULL; // Se a raiz ou a sub�rvore esquerda forem nulas, n�o h� maior elemento
     }
 
     Cel *atual = raiz->esquerda;
@@ -202,7 +189,6 @@ Cel *BuscarMaiorEsquerda(Cel *raiz)
 
     return mae;
 }
-
 
 int main()
 {
@@ -218,56 +204,57 @@ int main()
     insere(&raiz, 17);
     insere(&raiz, 2);
 
-    printf("Árvore original:\n");
+    printf("�rvore original:\n");
     imprimir(raiz);
-    
-    
-    //Mostra o pai do no com o valor da busca. Agora caso ele nao tenhaum pai ou nao esteja na arvore entra no else e retona o valor da busca
+
+    // Mostra o pai do no com o valor da busca. Agora caso ele nao tenhaum pai ou nao esteja na arvore entra no else e retona o valor da busca
     int valorBusca = 10;
     Cel *mae = BuscarMae(raiz, valorBusca);
     if (mae != NULL)
     {
-        printf("\n\nO valor %d tem como mãe o nó com conteúdo %d.\n", valorBusca, mae->conteudo);
+        printf("\n\nO valor %d tem como m�e o n� com conte�do %d.\n", valorBusca, mae->conteudo);
     }
     else
     {
-        printf("\n\nO valor %d é a raiz da árvore ou não está presente na árvore.\n", valorBusca);
+        printf("\n\nO valor %d � a raiz da �rvore ou n�o est� presente na �rvore.\n", valorBusca);
     }
 
-
-
     // remove o valor da busca e reorganiza a arvore
-    printf("\nRemovendo o valor %d da árvore...\n", valorBusca);
+    printf("\nRemovendo o valor %d da �rvore...\n", valorBusca);
     raiz = RemoverNo(raiz, valorBusca);
-    printf("Árvore após a remoção:\n");
+    printf("�rvore ap�s a remo��o:\n");
     imprimir(raiz);
 
     return 0;
 }
 
+// Cel *Remover(Cel *raiz, Cel *no)
+// {
+//     if (raiz == NULL)
+//         return raiz;
 
-Cel *Remover(Cel *raiz, Cel *no) {
-    if (raiz == NULL)
-        return raiz;
+//     if (no->conteudo < raiz->conteudo)
+//         raiz->esquerda = Remover(raiz->esquerda, no);
+//     else if (no->conteudo > raiz->conteudo)
+//         raiz->direita = Remover(raiz->direita, no);
+//     else
+//     {
+//         if (raiz->esquerda == NULL)
+//         {
+//             Cel *temp = raiz->direita;
+//             free(raiz);
+//             return temp;
+//         }
+//         else if (raiz->direita == NULL)
+//         {
+//             Cel *temp = raiz->esquerda;
+//             free(raiz);
+//             return temp;
+//         }
 
-    if (no->conteudo < raiz->conteudo)
-        raiz->esquerda = Remover(raiz->esquerda, no);
-    else if (no->conteudo > raiz->conteudo)
-        raiz->direita = Remover(raiz->direita, no);
-    else {
-        if (raiz->esquerda == NULL) {
-            Cel *temp = raiz->direita;
-            free(raiz);
-            return temp;
-        } else if (raiz->direita == NULL) {
-            Cel *temp = raiz->esquerda;
-            free(raiz);
-            return temp;
-        }
-
-        Cel *temp = BuscarMaiorEsquerda(raiz);
-        raiz->conteudo = temp->conteudo;
-        raiz->esquerda = Remover(raiz->esquerda, temp);
-    }
-    return raiz;
-}
+//         Cel *temp = BuscarMaiorEsquerda(raiz);
+//         raiz->conteudo = temp->conteudo;
+//         raiz->esquerda = Remover(raiz->esquerda, temp);
+//     }
+//     return raiz;
+// }
